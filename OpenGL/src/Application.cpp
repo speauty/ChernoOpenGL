@@ -1,6 +1,39 @@
 #include <iostream>
+#include <fstream>
+#include <string>
+#include <sstream>
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
+
+struct ShaderProgramSource
+{
+    std::string VertexSource;
+    std::string FragmentSource;
+};
+
+static ShaderProgramSource ParseShader(const std::string& filePath)
+{
+    std::ifstream stream(filePath); /* 这里没判断文件是否能正常打开 is_open */
+    enum class ShaderType {
+        NONE = -1, VERTEX = 0, FRAGMENT = 1
+    };
+
+    std::string line;
+    std::stringstream ss[2];
+    ShaderType type = ShaderType::NONE;
+    while (getline(stream, line)) {
+        if (line.find("#shader") != std::string::npos) { /* 找到#shader标记 */
+            if (line.find("vertex") != std::string::npos) { /* 顶点着色器标记 */
+                type = ShaderType::VERTEX;
+            } else if (line.find("fragment") != std::string::npos) { /* 片段着色器标记 */
+                type = ShaderType::FRAGMENT;
+            }
+        }  else {
+            ss[(int)type] << line << '\n';
+        }
+    }
+    return { ss[0].str(),ss[1].str() };
+}
 
 static unsigned int CompileShader(unsigned int type, const std::string& source)
 {
@@ -84,26 +117,9 @@ int main(void)
     glEnableVertexAttribArray(0); /* 激活顶点属性-索引0-位置 */
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0); /* 设置顶点属性-索引0 */
 
-    std::string vertexShader = 
-        "#version 330 core\n"
-        "\n"
-        "layout(location = 0)in vec4 position;"
-        "\n"
-        "void main()\n"
-        "{\n"
-        " gl_Position = position;\n"
-        "}\n";
-
-    std::string fragmentShader =
-        "#version 330 core\n"
-        "\n"
-        "layout(location = 0)out vec4 color;"
-        "\n"
-        "void main()\n"
-        "{\n"
-        " color = vec4(1.0, 0.0, 0.0, 1.0);\n"
-        "}\n";
-    unsigned int shader = CreateShader(vertexShader, fragmentShader);
+    /* 从文件中解析着色器源码 */
+    ShaderProgramSource source = ParseShader("res/shaders/Basic.shader");
+    unsigned int shader = CreateShader(source.VertexSource, source.FragmentSource);
     glUseProgram(shader); /* 使用着色器程序 */
 
     /* Loop until the user closes the window */
@@ -119,7 +135,7 @@ int main(void)
         /* Poll for and process events */
         glfwPollEvents();
     }
-    glDeleteProgram(shader); // 删除着色器程序
+    glDeleteProgram(shader); /* 删除着色器程序 */
 
     glfwTerminate();
     return 0;

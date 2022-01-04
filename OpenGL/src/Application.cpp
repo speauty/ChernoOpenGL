@@ -103,19 +103,32 @@ int main(void)
     std::cout << "Status: Using GL " << glGetString(GL_VERSION) << std::endl;
 
     /* 顶点位置浮点型数组 */
-    float positions[6] = {
-        -0.5f, -0.5f,
-        0.0f, 0.5f,
-        0.5f, -0.5f
+    float positions[] = {
+        -0.5f, -0.5f, // 0
+        0.5f, -0.5f,  // 1
+        0.5f, 0.5f,   // 2
+        -0.5f, 0.5f,  // 3
+    };
+
+    /* 索引缓冲区所需索引数组 */
+    unsigned int indices[] = {
+        0, 1, 2,
+        2, 3, 0
     };
 
     unsigned int buffer;
     glGenBuffers(1, &buffer); /* 生成缓冲区 */
     glBindBuffer(GL_ARRAY_BUFFER, buffer); /* 绑定缓冲区 */
-    glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), positions, GL_STATIC_DRAW); /* 设置缓冲区数据 */
+    glBufferData(GL_ARRAY_BUFFER, 4 * 2 * sizeof(float), positions, GL_STATIC_DRAW); /* 设置缓冲区数据 */
     
     glEnableVertexAttribArray(0); /* 激活顶点属性-索引0-位置 */
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), 0); /* 设置顶点属性-索引0 */
+
+    unsigned int ibo;
+    glGenBuffers(1, &ibo);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indices, GL_STATIC_DRAW);
+
 
     /* 从文件中解析着色器源码 */
     ShaderProgramSource source = ParseShader("res/shaders/Basic.shader");
@@ -127,7 +140,7 @@ int main(void)
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
-        glDrawArrays(GL_TRIANGLES, 0, 3); // 绘制
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr); // 绘制
 
         /* Swap front and back buffers */
         glfwSwapBuffers(window);

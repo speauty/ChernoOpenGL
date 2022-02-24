@@ -33,9 +33,16 @@
     <ClCompile Include="src\Shader.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="src\vender\stb_image\stb_image.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Texture.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />
+    <None Include="res\shaders\Basic.shader" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Renderer.h">
@@ -56,5 +63,19 @@
     <ClInclude Include="src\Shader.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="src\vender\stb_image\stb_image.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Texture.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\..\..\..\..\工作相关\翻译工作\ChernoOpenGL\ArctimePro\ChernoLogoAlpha.png">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\textures\ChernoLogo.png">
+      <Filter>资源文件</Filter>
+    </Image>
   </ItemGroup>
 </Project>

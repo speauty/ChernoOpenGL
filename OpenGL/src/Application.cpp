@@ -66,7 +66,22 @@ int main(void)
             2, 3, 0
         };
 
+        /**
+         * 混合: 
+         * 将输出颜色(判断着色器输出的颜色)和目标缓冲区已有的颜色结合
+         * glEnable/glDisable(启用&关闭) => glBlendFunc(指定颜色因子) => glBlendEquation(指定混合模式)
+         * glBlendEquation(mode) mode: src和dest的混合方式(默认GL_FUNC_ADD, 叠加)
+         * 
+         **/
+         /* 启用混合(默认不会启用) */
         GLCall(glEnable(GL_BLEND));
+        /**
+         * glBlendFunc(src, dest) 指定颜色因子
+         * src 指定输出颜色(RGBA)因子的计算方式, 默认为GL_ONE
+         * dest 指定目标颜色因子的计算方式, 默认为GL_ZERO
+         * GL_SRC_ALPHA 因为src的alpha为0, GL_ONE_MINUS_SRC_ALPHA 1-src.alpha
+         * RGBA = Srgba * GL_SRC_ALPHA + Drgba * GL_ONE_MINUS_SRC_ALPHA
+         **/
         GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
         VertexArray va;

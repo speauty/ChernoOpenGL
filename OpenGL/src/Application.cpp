@@ -100,14 +100,16 @@ int main(void)
         /* glm::ortho 正交矩阵 */
         /* 这里应该是 960x720 而不是 960x540 的分辨率 */
         glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 720.0f, -1.0f, 1.0f);
-        glm::vec4 vp(100.0f, 100.0f, 0.0f, 1.0f);
-
-        // glm::vec4 result = proj * vp;
+        /* 相机位置 视图矩阵 x&y&z */
+        glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(-100, 0, 0));
+        /* 模型矩阵 对象位置 */
+        glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(200, 200, 0));
+        glm::mat4 mvp = proj * view * model; /* 模型视图投影矩阵 */
 
         Shader shader("res/shaders/Basic.shader");
         shader.Bind();
         shader.SetUniform4f("u_Color", 0.2f, 0.3f, 0.8f, 1.0f);
-        shader.SetUniformMat4f("u_MVP", proj);
+        shader.SetUniformMat4f("u_MVP", mvp);
 
         Texture texture("res/textures/ChernoLogo.png");
         texture.Bind();

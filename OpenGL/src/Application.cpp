@@ -57,10 +57,10 @@ int main(void)
     {
         /* 顶点位置浮点型数组 */
         float positions[] = {
-            -0.5f, -0.5f, 0.0f, 0.0f, // 0
-            0.5f, -0.5f, 1.0f, 0.0f,  // 1
-            0.5f, 0.5f, 1.0f, 1.0f,    // 2
-            -0.5f, 0.5f, 0.0f, 1.0f   // 3
+            100.0f, 100.0f, 0.0f, 0.0f, // 0
+            200.0f, 100.0f, 1.0f, 0.0f,  // 1
+            200.0f, 200.0f, 1.0f, 1.0f,    // 2
+            100.0f, 200.0f, 0.0f, 1.0f   // 3
         };
 
         /* 索引缓冲区所需索引数组 */
@@ -98,7 +98,11 @@ int main(void)
         IndexBuffer ib(indices, 6);
 
         /* glm::ortho 正交矩阵 */
-        glm::mat4 proj = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f, -1.0f, 1.0f);
+        /* 这里应该是 960x720 而不是 960x540 的分辨率 */
+        glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 720.0f, -1.0f, 1.0f);
+        glm::vec4 vp(100.0f, 100.0f, 0.0f, 1.0f);
+
+        // glm::vec4 result = proj * vp;
 
         Shader shader("res/shaders/Basic.shader");
         shader.Bind();

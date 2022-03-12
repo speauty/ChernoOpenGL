@@ -62,11 +62,11 @@ int main(void)
 
     {
         /**
-         * 混合: 
+         * 混合:
          * 将输出颜色(判断着色器输出的颜色)和目标缓冲区已有的颜色结合
          * glEnable/glDisable(启用&关闭) => glBlendFunc(指定颜色因子) => glBlendEquation(指定混合模式)
          * glBlendEquation(mode) mode: src和dest的混合方式(默认GL_FUNC_ADD, 叠加)
-         * 
+         *
          **/
          /* 启用混合(默认不会启用) */
         GLCall(glEnable(GL_BLEND));
@@ -89,20 +89,32 @@ int main(void)
         const char* glsl_version = "#version 330";
         ImGui_ImplOpenGL3_Init(glsl_version);
 
-        test::TestClearColor test;
+        test::Test* currentTest = nullptr;
+        test::TestMenu* testMenu = new test::TestMenu(currentTest);
+        currentTest = testMenu;
+
+        testMenu->RegisterTest<test::TestClearColor>("ClearColor");
 
         while (!glfwWindowShouldClose(window)) {
+            GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
             renderer.Clear();
-            
-            test.OnUpdate(0.0f);
-            test.OnRender();
 
             ImGui_ImplOpenGL3_NewFrame();
             ImGui_ImplGlfw_NewFrame();
             ImGui::NewFrame();
 
+            if (currentTest)
             {
-                test.OnImGuiRender();
+                currentTest->OnUpdate(0.0f);
+                currentTest->OnRender();
+                ImGui::Begin("ImGui-Test");
+                if (currentTest != testMenu && ImGui::Button("<-"))
+                {
+                    delete currentTest;
+                    currentTest = testMenu;
+                }
+                currentTest->OnImGuiRender();
+                ImGui::End();
             }
 
             ImGui::Render();
@@ -110,6 +122,12 @@ int main(void)
 
             glfwSwapBuffers(window);
             glfwPollEvents();
+        }
+
+        delete currentTest;
+        if (currentTest != testMenu)
+        {
+            delete testMenu;
         }
     }
 

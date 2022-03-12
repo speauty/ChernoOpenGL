@@ -9,7 +9,6 @@ namespace test
 	class TestClearColor : public Test
 	{
 	private:
-		const char* m_Label;
 		float m_ClearColor[4];
 	public:
 		TestClearColor();

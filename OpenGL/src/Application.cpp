@@ -1,18 +1,7 @@
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <sstream>
 #include "GL/glew.h"
 #include "GLFW/glfw3.h"
 
 #include "Renderer.h"
-
-#include "VertexBuffer.h"
-#include "VertexBufferLayout.h"
-#include "IndexBuffer.h"
-#include "VertexArray.h"
-#include "Shader.h"
-#include "Texture.h"
 
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
@@ -22,6 +11,7 @@
 #include "imgui/imgui_impl_opengl3.h"
 
 #include "tests/TestClearColor.h"
+#include "tests/TestTexture2D.h"
 
 int main(void)
 {
@@ -93,7 +83,8 @@ int main(void)
         test::TestMenu* testMenu = new test::TestMenu(currentTest);
         currentTest = testMenu;
 
-        testMenu->RegisterTest<test::TestClearColor>("ClearColor");
+        testMenu->RegisterTest<test::TestClearColor>("Clear Color");
+        testMenu->RegisterTest<test::TestTexture2D>("2D Texture");
 
         while (!glfwWindowShouldClose(window)) {
             GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
@@ -107,7 +98,7 @@ int main(void)
             {
                 currentTest->OnUpdate(0.0f);
                 currentTest->OnRender();
-                ImGui::Begin("ImGui-Test");
+                ImGui::Begin("Test");
                 if (currentTest != testMenu && ImGui::Button("<-"))
                 {
                     delete currentTest;

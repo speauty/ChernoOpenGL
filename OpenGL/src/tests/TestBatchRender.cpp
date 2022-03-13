@@ -14,15 +14,15 @@ namespace test
         m_Translation(glm::vec3(0, 0, 0))
 	{
         float positions[] = {
-            100.0f, 100.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-            200.0f, 100.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-            200.0f, 200.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
-            100.0f, 200.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+            100.0f, 100.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+            200.0f, 100.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f,
+            200.0f, 200.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f,
+            100.0f, 200.0f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
 
-            300.0f, 100.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
-            400.0f, 100.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
-            400.0f, 200.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
-            300.0f, 200.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
+            300.0f, 100.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+            400.0f, 100.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+            400.0f, 200.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f,
+            300.0f, 200.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f,
 
         };
 
@@ -31,19 +31,32 @@ namespace test
             4, 5, 6, 6, 7, 4
         };
 
+        GLCall(glEnable(GL_BLEND));
+        GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+
         m_VAO = std::make_unique<VertexArray>();
 
-        m_VertexBuffer = std::make_unique<VertexBuffer>(positions, 8 * 8 * sizeof(float));
+        m_VertexBuffer = std::make_unique<VertexBuffer>(positions, 11 * 8 * sizeof(float));
         VertexBufferLayout layout;
-        layout.Push<float>(2); // 一组
-        layout.Push<float>(2);
-        layout.Push<float>(4); // 颜色组索引为1
+        layout.Push<float>(4); // 坐标 x, y, z, w  w 齐次坐标, 对xyz进行缩放
+        layout.Push<float>(4); // 颜色数据
+        layout.Push<float>(2); // 纹理坐标
+        layout.Push<float>(1); // 纹理插槽
         m_VAO->AddBuffer(*m_VertexBuffer, layout);
 
         m_IndexBuffer = std::make_unique<IndexBuffer>(indices, 12);
 
         m_Shader = std::make_unique<Shader>("res/shaders/Batch.shader");
         m_Shader->Bind();
+
+        m_Texture[0] = std::make_unique<Texture>("res/textures/ChernoLogo.png");
+        m_Texture[1] = std::make_unique<Texture>("res/textures/HazelLogo.png");
+        for (size_t i = 0; i < 2; i++)
+        {
+            m_Texture[i]->Bind(i);
+        }
+        int samplers[2] = { 0, 1 };
+        m_Shader->SetUniform1iv("u_Textures", 2, samplers);
 	}
 
 	TestBatchRender::~TestBatchRender()

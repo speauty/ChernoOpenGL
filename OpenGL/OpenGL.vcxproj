@@ -617,6 +617,7 @@
   <ItemGroup>
     <Image Include="..\..\..\..\..\工作相关\翻译工作\ChernoOpenGL\ArctimePro\ChernoLogoAlpha.png" />
     <Image Include="res\textures\ChernoLogo.png" />
+    <Image Include="res\textures\HazelLogo.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
